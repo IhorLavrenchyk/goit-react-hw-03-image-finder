@@ -9,7 +9,6 @@ import Loader from './Loader/Loader';
 import { fetchImages } from 'components/services/fetchImages';
 
 export default class App extends Component {
-
   // Запис state первинного стану
   state = {
     searchRequest: '',
@@ -18,6 +17,7 @@ export default class App extends Component {
     error: null,
     isLoading: false,
     showModal: null,
+    totalHits: null,
   };
 
   // Виклик методу оновлення компоненту
@@ -42,6 +42,7 @@ export default class App extends Component {
     setTimeout(() => {
       try {
         fetchImages(searchRequest, galleryPage).then(data => {
+          const { hits, totalHits } = data.data; // отримуємо поле totalHits з відповіді API
           // Перевірка, якщо запит не має результату пошуку - виводить оповіщення щодо помилки через toast
           if (!data.data.hits.length) {
             return toast.error(
@@ -62,9 +63,9 @@ export default class App extends Component {
           // Запис в state результатів пошуку
           this.setState({
             images: [...this.state.images, ...mappedImages],
+            totalHits,
           });
         });
-
       } catch (error) {
         this.setState({ error });
       } finally {
@@ -106,7 +107,10 @@ export default class App extends Component {
 
   // Метод відображення на екрані результатів
   render() {
-    const { images, isLoading, error, showModal } = this.state;
+    const { images, isLoading, error, showModal, totalHits } = this.state;
+    const renderedImagesCount = images.length;
+    const canLoadMore = totalHits > renderedImagesCount;
+
     return (
       <>
         <Searchbar onSearch={this.handleSearchSubmit} />
@@ -115,7 +119,7 @@ export default class App extends Component {
         {images.length > 0 && (
           <>
             <ImageGallery images={images} handlePreview={this.showModalImage} />
-            <Button loadMore={this.loadMore} />
+            {canLoadMore && <Button loadMore={this.loadMore} />}
           </>
         )}
         {showModal && (
