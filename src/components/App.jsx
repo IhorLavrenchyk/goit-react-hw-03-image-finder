@@ -81,7 +81,6 @@ export default class App extends Component {
       galleryPage: 1,
     });
   };
-
   // Довантаження додаткової сторінки до вже завантаженої галареї
   loadMore = () => {
     this.setState(prevState => ({
