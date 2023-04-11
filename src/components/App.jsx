@@ -42,7 +42,7 @@ export default class App extends Component {
     setTimeout(() => {
       try {
         fetchImages(searchRequest, galleryPage).then(data => {
-          const { hits, totalHits } = data.data; // отримуємо поле totalHits з відповіді API
+          const { totalHits } = data.data; // отримуємо поле totalHits з відповіді API
           // Перевірка, якщо запит не має результату пошуку - виводить оповіщення щодо помилки через toast
           if (!data.data.hits.length) {
             return toast.error(
